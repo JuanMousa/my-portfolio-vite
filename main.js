@@ -15,7 +15,7 @@ document.body.appendChild(renderer.domElement);
 camera.position.z = 5;
 
 const planeGeometry = new THREE.PlaneGeometry(5, 5);
-const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff });
+const planeMaterial = new THREE.MeshPhongMaterial({ color: 0x0000ff });
 const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(planeMesh);
 console.log(planeMesh);
