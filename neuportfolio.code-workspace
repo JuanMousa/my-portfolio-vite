@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"path": "../../neuportfolio"
+		},
+		{
+			"path": "../../OldVScode"
+		},
+		{
+			"path": "../../poco"
+		},
+		{
+			"path": "../../sandbox"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../sanbox2"
+		},
+		{
+			"path": "../../sanbox2/traning"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "sanbox2"
+	}
+}
