@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import * as dat from "dat.gui";
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { mapLinear } from "three/src/math/MathUtils.js";
+console.log(OrbitControls);
 
 const gui = new dat.GUI();
 const world = {
@@ -24,14 +26,14 @@ function generatePlane() {
     world.plane.widthAssagmnet,
     world.plane.heightAssagment
   );
-
+  
   const { array } = planeMesh.geometry.attributes.position;
-
+  
   for (let i = 0; i < array.length; i++) {
     const x = array[i];
     const y = array[i + 1];
     const z = array[i + 2];
-
+    
     array[i + 2] = z + Math.random(); // to make it fuzzy
   }
 }
@@ -47,6 +49,8 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(devicePixelRatio);
 document.body.appendChild(renderer.domElement);
+
+new OrbitControls(camera,renderer.domElement)
 
 camera.position.z = 5;
 
@@ -65,15 +69,20 @@ for (let i = 0; i < array.length; i++) {
   const x = array[i];
   const y = array[i + 1];
   const z = array[i + 2];
-
+  
   array[i + 2] = z + Math.random(); // to make it fuzzy
-
+  
   // console.log(array[i]);
 }
 
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(0, 0, 1);
 scene.add(light);
+
+const backLight = new THREE.DirectionalLight(0xffffff, 1);
+backLight.position.set(0, 0, -1);
+scene.add(backLight);
+
 function animate() {
   requestAnimationFrame(animate);
   // planeMesh.rotation.x += 0.01;
@@ -81,3 +90,15 @@ function animate() {
 }
 
 animate();
+
+
+const mouse = {
+  x: undefined,
+  y: undefined
+}
+addEventListener("mousemove", (event) => {
+    mouse.x = (event.clientX / innerWidth) * 2 - 1 // sudty this one
+    mouse.y = -(event.clientY / innerHeight) * 2 + 1
+  console.log(mouse);
+})
+console.log("1:18 minute")
