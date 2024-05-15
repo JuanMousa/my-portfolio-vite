@@ -13,6 +13,8 @@
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
+    "gasp": "^0.0.2",
+    "gsap": "^3.12.5",
     "three": "^0.163.0",
     "three-orbitcontrols": "^2.110.3"
   }

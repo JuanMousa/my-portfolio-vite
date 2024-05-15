@@ -1,22 +1,23 @@
 import * as THREE from "three";
+import gsap from "gsap";
 import * as dat from "dat.gui";
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { mapLinear } from "three/src/math/MathUtils.js";
-console.log(OrbitControls);
 
 const gui = new dat.GUI();
 const world = {
   plane: {
-    width: 10,
-    height: 10,
-    widthAssagmnet: 10,
-    heightAssagment: 10,
+    width: 19,
+    height: 19,
+    widthAssagmnet: 30,
+    heightAssagment: 30,
   },
 };
-gui.add(world.plane, "width", 1, 20).onChange(generatePlane);
-gui.add(world.plane, "height", 1, 20).onChange(generatePlane);
-gui.add(world.plane, "widthAssagmnet", 1, 20).onChange(generatePlane);
-gui.add(world.plane, "heightAssagment", 1, 20).onChange(generatePlane);
+gui.add(world.plane, "width", 1, 50).onChange(generatePlane);
+gui.add(world.plane, "height", 1, 50).onChange(generatePlane);
+gui.add(world.plane, "widthAssagmnet", 1, 50).onChange(generatePlane);
+gui.add(world.plane, "heightAssagment", 1, 50).onChange(generatePlane);
+
 
 function generatePlane() {
   planeMesh.geometry.dispose();
@@ -26,18 +27,32 @@ function generatePlane() {
     world.plane.widthAssagmnet,
     world.plane.heightAssagment
   );
-  
+
+  // vertices position randomazition
   const { array } = planeMesh.geometry.attributes.position;
-  
+
   for (let i = 0; i < array.length; i++) {
     const x = array[i];
     const y = array[i + 1];
     const z = array[i + 2];
-    
+
     array[i + 2] = z + Math.random(); // to make it fuzzy
   }
+  
+  // color attribute 
+  const color = [];
+  for (let i = 0; i < planeMesh.geometry.attributes.position.count; i++) {
+    color.push(0, 0.19, 0.4);
+  }
+  planeMesh.geometry.setAttribute(
+    "color",
+    new THREE.BufferAttribute(new Float32Array(color), 3)
+  );
 }
 
+// console.log(planeMesh.geometry.attributes.position);
+
+const rayCaster = new THREE.Raycaster();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -50,30 +65,56 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-new OrbitControls(camera,renderer.domElement)
-
+new OrbitControls(camera, renderer.domElement);
 camera.position.z = 5;
 
-const planeGeometry = new THREE.PlaneGeometry(5, 5, 10, 10);
+const planeGeometry = new THREE.PlaneGeometry(
+  world.plane.width,
+  world.plane.height,
+  world.plane.widthAssagmnet,
+  world.plane.heightAssagment
+);
 const planeMaterial = new THREE.MeshPhongMaterial({
-  color: 0x68d2e8,
   side: THREE.DoubleSide,
   flatShading: true,
+  vertexColors: true,
 });
 const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(planeMesh);
 
+// object distructure
 const { array } = planeMesh.geometry.attributes.position;
-
+const randomValues = [];
 for (let i = 0; i < array.length; i++) {
-  const x = array[i];
-  const y = array[i + 1];
-  const z = array[i + 2];
-  
-  array[i + 2] = z + Math.random(); // to make it fuzzy
-  
-  // console.log(array[i]);
+
+  if (i % 3 === 0) {
+
+    const x = array[i];
+    const y = array[i + 1];
+    const z = array[i + 2];
+    
+    array[i] = x + Math.random() - 0.05;
+    array[i + 1] = y + Math.random() - 0.05;
+    array[i + 2] = z + Math.random(); // to make it fuzzy
+  }
+  randomValues.push(Math.random())
 }
+
+console.log(randomValues);
+// add normal value for position
+planeMesh.geometry.attributes.position.randomValues = randomValues;
+// here i add the original position
+planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array;
+console.log(planeMesh.geometry.attributes.position)
+// the new color for planMesh
+const color = [];
+for (let i = 0; i < planeMesh.geometry.attributes.position.count; i++) {
+  color.push(0, 0.19, 0.4);
+}
+planeMesh.geometry.setAttribute(
+  "color",
+  new THREE.BufferAttribute(new Float32Array(color), 3)
+);
 
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(0, 0, 1);
@@ -83,22 +124,84 @@ const backLight = new THREE.DirectionalLight(0xffffff, 1);
 backLight.position.set(0, 0, -1);
 scene.add(backLight);
 
+const mouse = {x: undefined, y: undefined,};
+
+// to make the move
+let frame = 0; 
 function animate() {
   requestAnimationFrame(animate);
   // planeMesh.rotation.x += 0.01;
   renderer.render(scene, camera);
+  frame += 0.01;
+  const { array, originalPosition, randomValues} = planeMesh.geometry.attributes.position;
+  for (let i = 0; i < array.length; i += 3) {
+    // x
+    array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.01;
+    // if (i === 0) {
+    //   console.log(array[i]);
+    // }
+    // // y
+    // array[i + 1] = originalPosition[i + 1];
+    // // z
+    // array[i + 2] = originalPosition[i + 2];
+
+    planeMesh.geometry.attributes.position.needsUpdate = true;
+  }
+
+  // laiser point
+  rayCaster.setFromCamera(mouse, camera);
+  const intersects = rayCaster.intersectObject(planeMesh);
+
+  if (intersects.length > 0) {
+    const { color } = intersects[0].object.geometry.attributes;
+    // vertesis 1
+    color.setX(intersects[0].face.a, 0.1);
+    color.setY(intersects[0].face.a, 0.5);
+    color.setZ(intersects[0].face.a, 1);
+
+    // vertesis 2
+    color.setX(intersects[0].face.b, 0.1);
+    color.setY(intersects[0].face.b, 0.5);
+    color.setZ(intersects[0].face.b, 1);
+
+    // vertesis 3
+    color.setX(intersects[0].face.c, 0.1);
+    color.setY(intersects[0].face.c, 0.5);
+    color.setZ(intersects[0].face.c, 1);
+
+    intersects[0].object.geometry.attributes.color.needsUpdate = true;
+
+    const initialColor = { r: 0, g: 0.19, b: 0.4 };
+
+    const hoverColor = { r: 0.1, g: 0.5, b: 1 };
+
+    gsap.to(hoverColor, {
+      r: initialColor.r,
+      g: initialColor.g,
+      b: initialColor.b,
+      duration: 1,
+      onUpdate: () => {
+        color.setX(intersects[0].face.a, hoverColor.r);
+        color.setY(intersects[0].face.a, hoverColor.g);
+        color.setZ(intersects[0].face.a, hoverColor.b);
+
+        // vertesis 2
+        color.setX(intersects[0].face.b, hoverColor.r);
+        color.setY(intersects[0].face.b, hoverColor.g);
+        color.setZ(intersects[0].face.b, hoverColor.b);
+
+        // vertesis 3
+        color.setX(intersects[0].face.c, hoverColor.r);
+        color.setY(intersects[0].face.c, hoverColor.g);
+        color.setZ(intersects[0].face.c, hoverColor.b);
+      },
+    });
+  }
 }
 
 animate();
 
-
-const mouse = {
-  x: undefined,
-  y: undefined
-}
 addEventListener("mousemove", (event) => {
-    mouse.x = (event.clientX / innerWidth) * 2 - 1 // sudty this one
-    mouse.y = -(event.clientY / innerHeight) * 2 + 1
-  console.log(mouse);
-})
-console.log("1:18 minute")
+  mouse.x = (event.clientX / innerWidth) * 2 - 1; // sudty this one
+  mouse.y = -(event.clientY / innerHeight) * 2 + 1;
+});
