@@ -7,10 +7,10 @@ import { mapLinear } from "three/src/math/MathUtils.js";
 const gui = new dat.GUI();
 const world = {
   plane: {
-    width: 19,
-    height: 19,
-    widthAssagmnet: 30,
-    heightAssagment: 30,
+    width: 400,
+    height: 400,
+    widthAssagmnet: 50,
+    heightAssagment: 50,
   },
 };
 gui.add(world.plane, "width", 1, 50).onChange(generatePlane);
@@ -66,7 +66,7 @@ renderer.setPixelRatio(devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
-camera.position.z = 5;
+camera.position.z = 50;
 
 const planeGeometry = new THREE.PlaneGeometry(
   world.plane.width,
@@ -93,11 +93,11 @@ for (let i = 0; i < array.length; i++) {
     const y = array[i + 1];
     const z = array[i + 2];
     
-    array[i] = x + Math.random() - 0.05;
-    array[i + 1] = y + Math.random() - 0.05;
-    array[i + 2] = z + Math.random(); // to make it fuzzy
+    array[i] = x + (Math.random() - 0.05 * 3);
+    array[i + 1] = y + (Math.random() - 0.05) * 6;
+    array[i + 2] = z + (Math.random() - 0.5) * 9 ; // to make it fuzzy
   }
-  randomValues.push(Math.random())
+  randomValues.push(Math.random() - 0.5)
 }
 
 console.log(randomValues);
@@ -117,7 +117,7 @@ planeMesh.geometry.setAttribute(
 );
 
 const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(0, 0, 1);
+light.position.set(0, 1, 1);
 scene.add(light);
 
 const backLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -136,14 +136,8 @@ function animate() {
   const { array, originalPosition, randomValues} = planeMesh.geometry.attributes.position;
   for (let i = 0; i < array.length; i += 3) {
     // x
-    array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.01;
-    // if (i === 0) {
-    //   console.log(array[i]);
-    // }
-    // // y
-    // array[i + 1] = originalPosition[i + 1];
-    // // z
-    // array[i + 2] = originalPosition[i + 2];
+    array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.003;
+    array[i + 1] = originalPosition[i + 1] + Math.cos(frame + randomValues[i + 1]) * 0.003;
 
     planeMesh.geometry.attributes.position.needsUpdate = true;
   }
@@ -205,3 +199,6 @@ addEventListener("mousemove", (event) => {
   mouse.x = (event.clientX / innerWidth) * 2 - 1; // sudty this one
   mouse.y = -(event.clientY / innerHeight) * 2 + 1;
 });
+
+
+console.log("2:13")
