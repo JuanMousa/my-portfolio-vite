@@ -1,0 +1,11 @@
+1- install three.js and vite 
+2- creat scene, camera, and render
+3- add dat.GUI and modifiy it 
+4- add orbit control
+5- add hover effect
+    1- add mousemove event listner
+    2- normalize mouse coordinates 
+    3- import raycaster (laiser pointer)
+    4- test for interscets
+    5- Based off interscets face, change surrouding vertex color
+6- add HTML and inegrete with JS    

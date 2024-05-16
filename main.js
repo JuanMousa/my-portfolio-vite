@@ -10,11 +10,11 @@ const world = {
     width: 400,
     height: 400,
     widthAssagmnet: 50,
-    heightAssagment: 50,
+    heightAssagment: 50,  // in the V its 100
   },
 };
-gui.add(world.plane, "width", 1, 50).onChange(generatePlane);
-gui.add(world.plane, "height", 1, 50).onChange(generatePlane);
+gui.add(world.plane, "width", 1, 400).onChange(generatePlane);
+gui.add(world.plane, "height", 1, 400).onChange(generatePlane);
 gui.add(world.plane, "widthAssagmnet", 1, 50).onChange(generatePlane);
 gui.add(world.plane, "heightAssagment", 1, 50).onChange(generatePlane);
 
@@ -28,16 +28,39 @@ function generatePlane() {
     world.plane.heightAssagment
   );
 
-  // vertices position randomazition
   const { array } = planeMesh.geometry.attributes.position;
+const randomValues = [];
+for (let i = 0; i < array.length; i++) {
 
-  for (let i = 0; i < array.length; i++) {
+  if (i % 3 === 0) {
+
     const x = array[i];
     const y = array[i + 1];
     const z = array[i + 2];
-
-    array[i + 2] = z + Math.random(); // to make it fuzzy
+    
+    array[i] = x + (Math.random() - 0.05 * 3);
+    array[i + 1] = y + (Math.random() - 0.05) * 6;
+    array[i + 2] = z + (Math.random() - 0.5) * 9 ; // to make it fuzzy
   }
+  randomValues.push(Math.random() * Math.PI * 2)
+}
+
+// add normal value for position
+planeMesh.geometry.attributes.position.randomValues = randomValues;
+// here i add the original position
+planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array;
+
+
+  // vertices position randomazition
+  // const { array } = planeMesh.geometry.attributes.position;
+
+  // for (let i = 0; i < array.length; i++) {
+  //   const x = array[i];
+  //   const y = array[i + 1];
+  //   const z = array[i + 2];
+
+  //   array[i + 2] = z + Math.random(); // to make it fuzzy
+  // }
   
   // color attribute 
   const color = [];
@@ -50,7 +73,7 @@ function generatePlane() {
   );
 }
 
-// console.log(planeMesh.geometry.attributes.position);
+console.log("ist wrorkin");
 
 const rayCaster = new THREE.Raycaster();
 const scene = new THREE.Scene();
@@ -66,7 +89,7 @@ renderer.setPixelRatio(devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
 new OrbitControls(camera, renderer.domElement);
-camera.position.z = 50;
+camera.position.z = 80;
 
 const planeGeometry = new THREE.PlaneGeometry(
   world.plane.width,
@@ -82,39 +105,42 @@ const planeMaterial = new THREE.MeshPhongMaterial({
 const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
 scene.add(planeMesh);
 
+generatePlane();
 // object distructure
-const { array } = planeMesh.geometry.attributes.position;
-const randomValues = [];
-for (let i = 0; i < array.length; i++) {
+// vertices position ranmazition
+// const { array } = planeMesh.geometry.attributes.position;
+// const randomValues = [];
+// for (let i = 0; i < array.length; i++) {
 
-  if (i % 3 === 0) {
+//   if (i % 3 === 0) {
 
-    const x = array[i];
-    const y = array[i + 1];
-    const z = array[i + 2];
+//     const x = array[i];
+//     const y = array[i + 1];
+//     const z = array[i + 2];
     
-    array[i] = x + (Math.random() - 0.05 * 3);
-    array[i + 1] = y + (Math.random() - 0.05) * 6;
-    array[i + 2] = z + (Math.random() - 0.5) * 9 ; // to make it fuzzy
-  }
-  randomValues.push(Math.random() - 0.5)
-}
+//     array[i] = x + (Math.random() - 0.05 * 3);
+//     array[i + 1] = y + (Math.random() - 0.05) * 6;
+//     array[i + 2] = z + (Math.random() - 0.5) * 9 ; // to make it fuzzy
+//   }
+//   randomValues.push(Math.random() - 0.5)
+// }
 
-console.log(randomValues);
-// add normal value for position
-planeMesh.geometry.attributes.position.randomValues = randomValues;
-// here i add the original position
-planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array;
-console.log(planeMesh.geometry.attributes.position)
+// // add normal value for position
+// planeMesh.geometry.attributes.position.randomValues = randomValues;
+// // here i add the original position
+// planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.attributes.position.array;
+
+
 // the new color for planMesh
-const color = [];
-for (let i = 0; i < planeMesh.geometry.attributes.position.count; i++) {
-  color.push(0, 0.19, 0.4);
-}
-planeMesh.geometry.setAttribute(
-  "color",
-  new THREE.BufferAttribute(new Float32Array(color), 3)
-);
+// const color = [];
+// for (let i = 0; i < planeMesh.geometry.attributes.position.count; i++) {
+//   color.push(0, 0.19, 0.4);
+// }
+// planeMesh.geometry.setAttribute(
+//   "color",
+//   new THREE.BufferAttribute(new Float32Array(color), 3)
+// );
+
 
 const light = new THREE.DirectionalLight(0xffffff, 1);
 light.position.set(0, 1, 1);
@@ -201,4 +227,3 @@ addEventListener("mousemove", (event) => {
 });
 
 
-console.log("2:13")
