@@ -37,31 +37,40 @@ body {
 
 .textContent h1 {
     font-size: 1.5rem;
-    margin: 1rem;
+    margin: 3rem 1rem;
     font-family: "space mono";
     font-weight: 700;
+    transform: translateY(30px);
 
 }
 
 .textContent p {
     font-size: 2rem;
     font-weight: bold;
+    transform: translateY(30px);
+    max-width: 43rem;
 }
 
-.textContent button {
+.textContent a {
+    display: inline-block;
     background-color: transparent;
     color: var(--textColor);
     border: 1px solid var(--textColor);
-    margin-top: 2rem;
     padding: .5rem 1rem;
+    margin: 2rem;
     font-size: 1rem;
     border-radius: 5px;
     font-family: "space mono";
     text-transform: uppercase;
-    cursor: pointer;
+    text-decoration: none;
+    transform: translateY(30px);
 }
 
 .textContent button:hover {
     background-color: var(--textColor);
     color: rgb(0, .19, .4);
+}
+
+.textContent h1, .textContent p, .textContent a {
+    opacity: 0;
 }

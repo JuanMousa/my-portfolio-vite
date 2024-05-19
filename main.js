@@ -65,7 +65,7 @@ planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.att
   // color attribute 
   const color = [];
   for (let i = 0; i < planeMesh.geometry.attributes.position.count; i++) {
-    color.push(0, 0.19, 0.4);
+    color.push(0, 0.19, 0.6);
   }
   planeMesh.geometry.setAttribute(
     "color",
@@ -150,6 +150,28 @@ const backLight = new THREE.DirectionalLight(0xffffff, 1);
 backLight.position.set(0, 0, -1);
 scene.add(backLight);
 
+const starGeometry = new THREE.BufferGeometry();
+const starMaterial = new THREE.PointsMaterial({
+  color: 0xffffff
+});
+
+const starVerticies = [];
+for (let i = 0; i < 10000; i++) {
+  const x = (Math.random() - 0.5) * 2000;
+  const y = (Math.random() - 0.5) * 2000;
+  const z = (Math.random() - 0.5) * 2000;
+  starVerticies.push(x, y, z);
+
+}
+
+starGeometry.setAttribute("position", 
+  new THREE.Float32BufferAttribute(starVerticies, 3)
+)
+
+// kind of like Mesh
+const stars = new THREE.Points(starGeometry, starMaterial);
+scene.add(stars);
+
 const mouse = {x: undefined, y: undefined,};
 
 // to make the move
@@ -162,8 +184,8 @@ function animate() {
   const { array, originalPosition, randomValues} = planeMesh.geometry.attributes.position;
   for (let i = 0; i < array.length; i += 3) {
     // x
-    array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.003;
-    array[i + 1] = originalPosition[i + 1] + Math.cos(frame + randomValues[i + 1]) * 0.003;
+    array[i] = originalPosition[i] + Math.cos(frame + randomValues[i]) * 0.004;
+    array[i + 1] = originalPosition[i + 1] + Math.cos(frame + randomValues[i + 1]) * 0.004;
 
     planeMesh.geometry.attributes.position.needsUpdate = true;
   }
@@ -191,7 +213,7 @@ function animate() {
 
     intersects[0].object.geometry.attributes.color.needsUpdate = true;
 
-    const initialColor = { r: 0, g: 0.19, b: 0.4 };
+    const initialColor = { r: 0, g: 0.19, b: 0.6 };
 
     const hoverColor = { r: 0.1, g: 0.5, b: 1 };
 
@@ -217,6 +239,9 @@ function animate() {
       },
     });
   }
+  stars.rotation.x += 0.0001;
+ 
+
 }
 
 animate();
@@ -227,3 +252,71 @@ addEventListener("mousemove", (event) => {
 });
 
 
+// textContent animation
+gsap.to(juMo, {
+  opacity: 1,
+  delay: 0.3,
+  duration: 1.5,
+  y: 0,
+  ease: "expo"
+
+});
+
+
+gsap.to(welcomeP, {
+  opacity: 1,
+  delay: 0.6,
+  duration: 1.5,
+  y: 0,
+  ease: "expo"
+
+});
+
+gsap.to(viewWorkBtn, {
+  opacity: 1,
+  delay: 0.9,
+  duration: 1.5,
+  y: 0,
+  ease: "expo"
+
+});
+
+
+// a Btn camera animation
+document.querySelector("#viewWorkBtn").addEventListener(
+  "click", (e) => {
+    e.preventDefault();
+    
+    gsap.to(textContent, {
+      opacity: 0
+    });
+
+    gsap.to(camera.position, {
+      z: 25,
+      duration: 2,
+      ease: "power3.inOut"
+    });
+
+    gsap.to(camera.rotation, {
+      x: 1.57,
+      // delay: 2,
+      duration: 2,
+      ease: "power3.inOut"
+
+    });
+
+    gsap.to(camera.position, {
+      y: 1000,
+      duration: 1,
+      ease: "power3.in",
+      delay: 2
+    })
+  }
+);
+
+addEventListener("resize", () => {
+  camera.aspect = innerWidth / innerHeight;
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.updateProjectionMatrix()
+  console.log(renderer)
+})
