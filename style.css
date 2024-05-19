@@ -33,11 +33,13 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     word-spacing: 3px;
+    width: 100%;
+    padding: 0 10px;
 }
 
 .textContent h1 {
     font-size: 1.5rem;
-    margin: 3rem 1rem;
+    margin: 3rem 1rem 1rem;
     font-family: "space mono";
     font-weight: 700;
     transform: translateY(30px);
@@ -48,7 +50,6 @@ body {
     font-size: 2rem;
     font-weight: bold;
     transform: translateY(30px);
-    max-width: 43rem;
 }
 
 .textContent a {
