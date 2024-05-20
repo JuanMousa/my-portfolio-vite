@@ -174,6 +174,7 @@ scene.add(stars);
 
 const mouse = {x: undefined, y: undefined,};
 
+
 // to make the move
 let frame = 0; 
 function animate() {
@@ -241,7 +242,6 @@ function animate() {
   }
   stars.rotation.x += 0.0001;
  
-
 }
 
 animate();
@@ -318,5 +318,4 @@ addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.updateProjectionMatrix()
-  console.log(renderer)
 })

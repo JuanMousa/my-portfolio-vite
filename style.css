@@ -50,6 +50,8 @@ body {
     font-size: 2rem;
     font-weight: bold;
     transform: translateY(30px);
+    width: 50%;
+    margin: 0 auto;
 }
 
 .textContent a {
