@@ -8,4 +8,6 @@
     3- import raycaster (laiser pointer)
     4- test for interscets
     5- Based off interscets face, change surrouding vertex color
-6- add HTML and inegrete with JS    
+6- add HTML and inegrete with JS 
+7- make the main.js responsive + CSS 
+8- 

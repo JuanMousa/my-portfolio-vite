@@ -19,6 +19,8 @@ gui.add(world.plane, "widthAssagmnet", 1, 50).onChange(generatePlane);
 gui.add(world.plane, "heightAssagment", 1, 50).onChange(generatePlane);
 
 
+
+
 function generatePlane() {
   planeMesh.geometry.dispose();
   planeMesh.geometry = new THREE.PlaneGeometry(
@@ -74,7 +76,7 @@ planeMesh.geometry.attributes.position.originalPosition = planeMesh.geometry.att
 }
 
 console.log("ist wrorkin");
-
+// laiser point
 const rayCaster = new THREE.Raycaster();
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
@@ -155,6 +157,8 @@ const starMaterial = new THREE.PointsMaterial({
   color: 0xffffff
 });
 
+
+// the stars distrbioter
 const starVerticies = [];
 for (let i = 0; i < 10000; i++) {
   const x = (Math.random() - 0.5) * 2000;
@@ -175,7 +179,7 @@ scene.add(stars);
 const mouse = {x: undefined, y: undefined,};
 
 
-// to make the move
+// to make the moving wave
 let frame = 0; 
 function animate() {
   requestAnimationFrame(animate);
@@ -191,22 +195,23 @@ function animate() {
     planeMesh.geometry.attributes.position.needsUpdate = true;
   }
 
+
+
   // laiser point
   rayCaster.setFromCamera(mouse, camera);
   const intersects = rayCaster.intersectObject(planeMesh);
-
   if (intersects.length > 0) {
     const { color } = intersects[0].object.geometry.attributes;
     // vertesis 1
     color.setX(intersects[0].face.a, 0.1);
     color.setY(intersects[0].face.a, 0.5);
     color.setZ(intersects[0].face.a, 1);
-
+    
     // vertesis 2
     color.setX(intersects[0].face.b, 0.1);
     color.setY(intersects[0].face.b, 0.5);
     color.setZ(intersects[0].face.b, 1);
-
+    
     // vertesis 3
     color.setX(intersects[0].face.c, 0.1);
     color.setY(intersects[0].face.c, 0.5);
@@ -215,9 +220,9 @@ function animate() {
     intersects[0].object.geometry.attributes.color.needsUpdate = true;
 
     const initialColor = { r: 0, g: 0.19, b: 0.6 };
-
+    
     const hoverColor = { r: 0.1, g: 0.5, b: 1 };
-
+    
     gsap.to(hoverColor, {
       r: initialColor.r,
       g: initialColor.g,
@@ -227,12 +232,12 @@ function animate() {
         color.setX(intersects[0].face.a, hoverColor.r);
         color.setY(intersects[0].face.a, hoverColor.g);
         color.setZ(intersects[0].face.a, hoverColor.b);
-
+        
         // vertesis 2
         color.setX(intersects[0].face.b, hoverColor.r);
         color.setY(intersects[0].face.b, hoverColor.g);
         color.setZ(intersects[0].face.b, hoverColor.b);
-
+        
         // vertesis 3
         color.setX(intersects[0].face.c, hoverColor.r);
         color.setY(intersects[0].face.c, hoverColor.g);
@@ -241,7 +246,7 @@ function animate() {
     });
   }
   stars.rotation.x += 0.0001;
- 
+  
 }
 
 animate();
@@ -299,7 +304,6 @@ document.querySelector("#viewWorkBtn").addEventListener(
 
     gsap.to(camera.rotation, {
       x: 1.57,
-      // delay: 2,
       duration: 2,
       ease: "power3.inOut"
 
@@ -309,7 +313,10 @@ document.querySelector("#viewWorkBtn").addEventListener(
       y: 1000,
       duration: 1,
       ease: "power3.in",
-      delay: 2
+      delay: 2,
+      onComplete: () => {
+        console.log("test")
+      }
     })
   }
 );
@@ -318,4 +325,5 @@ addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight;
   renderer.setSize(window.innerWidth, window.innerHeight);
   camera.updateProjectionMatrix()
-})
+});
+
